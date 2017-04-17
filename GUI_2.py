@@ -4,15 +4,8 @@ import time
 import picamera
 
 root = Tk()
-root.wm_title("Camera")
+root.wm_title("Camera Control")
 
-#GPIO.setmode(GPIO.BOARD)
-#pin_number = 11
-#GPIO.setup(pin_number, GPIO.OUT)
-#freq_hertz = 50
-#pwm = GPIO.PWM(pin_number, freq_hertz)
-#ms_per_cycle = 1000 / freq_hertz
-#positionValue = 1.5
     
 def horizMotorLeft():
     GPIO.setmode(GPIO.BOARD)
@@ -95,16 +88,20 @@ def motorReset():
     pwm2.stop()
     GPIO.cleanup()
 
-def cameraOn():
+def cameraPreview():
     camera = picamera.PiCamera()
     camera.start_preview()
+    time.sleep(20)
+    camera.stop_preview()
+    camera.close()
 
 def cameraOff():
     camera = picamera.PiCamera()
     camera.stop_preview()
+    camera.close()
 
-leftFrame = Frame(root, width=800, height=800)
-leftFrame.grid(row=0, column=0, padx=4, pady=5)
+leftFrame = Frame(root, width=800, height=1200)
+leftFrame.grid(row=0, column=0, padx=4, pady=8)
 
 Label(leftFrame, text="Camera Control").grid(row=0, column=0, padx=0, pady=0)
 
@@ -131,13 +128,19 @@ reset.grid(row=2, column=1)
 camera_label = Label(leftFrame, text="Camera Video", anchor="w")
 camera_label.grid(row=4,column=0)
 
-camera_on = Button(leftFrame, text="Start", width=10, command = cameraOn)
-camera_on.grid(row=5,column=0)
-
 camera_off = Button(leftFrame, text="Stop", width=10, command = cameraOff)
 camera_off.grid(row=5,column=1)
 
 camera_record = Button(leftFrame, text="Record", width=10)
 camera_record.grid(row=5, column=2)
+
+entry = Entry(leftFrame, width=10)
+entry.grid(row=6, column=1)
+
+entry_label = Label(leftFrame, text="Preview Time")#Does not work right now
+entry_label.grid(row=6, column=0)
+
+camera_preview = Button(leftFrame, text="Start Preview", width=10, command = cameraPreview)
+camera_preview.grid(row=6,column=2)
         
 root.mainloop() #start monitoring and updating the GUI
